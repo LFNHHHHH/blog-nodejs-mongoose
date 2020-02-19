@@ -1,5 +1,6 @@
 var express = require('express')
 var Users = require('./models/user')
+var md5 = require('blueimp-md5')
 
 var router = express.Router()
 
@@ -20,10 +21,6 @@ router.get('/register', function (req, res) {
 })
 
 router.post('/register', function (req, res) {
-    // console.log(req.body)
-    // 根据 邮箱 昵称 查询是否注册
-    // 若已注册则相应
-    // 若未注册则将数据保存到服务器，并相应
     var body = req.body
     Users.findOne({
         $or: [{
@@ -46,6 +43,9 @@ router.post('/register', function (req, res) {
                 message: 'Email or nickname aleady exists!'
             })
         }
+
+        body.password = md5(md5(body.password))  // 对用户密码进行 md5 加密
+
         new Users(body).save(function (err, data) {
             if (err) {
                 return res.status(500).json({

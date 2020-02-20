@@ -4,17 +4,17 @@ var md5 = require('blueimp-md5')
 
 var router = express.Router()
 
-router.get('/', function (req, res) {
+router.get('/', function (req, res) {  // 首页页面渲染
     res.render('index.html', {
         user: req.session.user
     })
 })
 
-router.get('/login', function (req, res) {
+router.get('/login', function (req, res) {  // 登录页面渲染
     res.render('login.html')
 })
 
-router.post('/login', function (req, res) {
+router.post('/login', function (req, res) {  // 登录请求发送
     var body = req.body
     Users.findOne({
         email: body.email,
@@ -27,7 +27,7 @@ router.post('/login', function (req, res) {
             })
         }
         if (!user) {
-            return res.status(500).json({
+            return res.status(200).json({
                 err_code: 1,
                 message: 'Email or password is invalid.'
             })
@@ -42,11 +42,11 @@ router.post('/login', function (req, res) {
     })
 })
 
-router.get('/register', function (req, res) {
+router.get('/register', function (req, res) {  // 注册页面渲染
     res.render('register.html')
 })
 
-router.post('/register', function (req, res) {
+router.post('/register', function (req, res) {  // 注册页面请求发送
     var body = req.body
     Users.findOne({
         $or: [{
@@ -92,8 +92,9 @@ router.post('/register', function (req, res) {
 
 })
 
-router.post('/logout', function (req, res) {
-    
+router.get('/logout', function (req, res) {  // 退出登录请求
+    req.session.user = null  // 清除 session 标记
+    res.redirect('/login')
 })
 
 module.exports = router

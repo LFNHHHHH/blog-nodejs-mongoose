@@ -51,9 +51,9 @@
           if (data.err_code === 0) {
             window.location.href = '/'  // 登录成功后重定向到首页
           } else if (data.err_code === 500) {
-            alert('登录失败')
+            window.alert('登录失败')
           } else if (data.err_code === 1) {
-            alert('邮箱或者昵称无效')
+            window.alert('邮箱或者密码错误，请重试')
           }
         }
       })

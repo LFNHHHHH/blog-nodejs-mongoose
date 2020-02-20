@@ -5,7 +5,9 @@ var md5 = require('blueimp-md5')
 var router = express.Router()
 
 router.get('/', function (req, res) {
-    res.render('index.html')
+    res.render('index.html', {
+        user: req.session.user
+    })
 })
 
 router.get('/login', function (req, res) {
@@ -53,10 +55,14 @@ router.post('/register', function (req, res) {
                     message: 'Save users error!'
                 })
             }
+
+            req.session.user = data  // 注册成功后，使用 Session 记录用户登录状态
+
             res.status(200).json({
                 err_code: 0,
                 message: 'Ok'            
             })
+            
         })
     })
 

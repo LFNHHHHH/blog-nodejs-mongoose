@@ -15,7 +15,31 @@ router.get('/login', function (req, res) {
 })
 
 router.post('/login', function (req, res) {
-    
+    var body = req.body
+    Users.findOne({
+        email: body.email,
+        password: md5(md5(body.password))
+    }, function (err, user) {
+        if (err) {
+            return res.status(500).json({
+                err_code: 500,
+                message: err.message
+            })
+        }
+        if (!user) {
+            return res.status(500).json({
+                err_code: 1,
+                message: 'Email or password is invalid.'
+            })
+        }
+
+        req.session.user = user  // 用户登录成功，通过 session 记录登录状态
+
+        res.status(200).json({
+            err_code: 0,
+            message: 'Ok'
+        })
+    })
 })
 
 router.get('/register', function (req, res) {
@@ -60,7 +84,7 @@ router.post('/register', function (req, res) {
 
             res.status(200).json({
                 err_code: 0,
-                message: 'Ok'            
+                message: 'Ok'
             })
             
         })

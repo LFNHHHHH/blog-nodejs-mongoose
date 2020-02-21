@@ -14,17 +14,14 @@ router.get('/login', function (req, res) {  // 登录页面渲染
     res.render('login.html')
 })
 
-router.post('/login', function (req, res) {  // 登录请求发送
+router.post('/login', function (req, res, next) {  // 登录请求发送
     var body = req.body
     Users.findOne({
         email: body.email,
         password: md5(md5(body.password))
     }, function (err, user) {
         if (err) {
-            return res.status(500).json({
-                err_code: 500,
-                message: err.message
-            })
+            return next(err)
         }
         if (!user) {
             return res.status(200).json({
@@ -46,7 +43,7 @@ router.get('/register', function (req, res) {  // 注册页面渲染
     res.render('register.html')
 })
 
-router.post('/register', function (req, res) {  // 注册页面请求发送
+router.post('/register', function (req, res, next) {  // 注册页面请求发送
     var body = req.body
     Users.findOne({
         $or: [{
@@ -58,10 +55,7 @@ router.post('/register', function (req, res) {  // 注册页面请求发送
         ]
     }, function (err, data) {
         if (err) {  // 查询失败
-            return res.stutus(500).json({
-                success: false, 
-                message: '服务端错误'
-            })
+            return next(err)
         }
         if (data) {  // 邮箱 或 昵称 已存在
             return res.status(200).json({
@@ -74,10 +68,7 @@ router.post('/register', function (req, res) {  // 注册页面请求发送
 
         new Users(body).save(function (err, data) {
             if (err) {
-                return res.status(500).json({
-                    err_code: 500,
-                    message: 'Save users error!'
-                })
+                return next(err)
             }
 
             req.session.user = data  // 注册成功后，使用 Session 记录用户登录状态

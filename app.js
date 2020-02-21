@@ -23,6 +23,17 @@ app.use(session({
 
 app.use(router)  // 把路由挂载到 app 服务中
 
+app.use(function(req, res) {  // 配置一个处理 404 的中间件
+    res.render('404.html')
+})
+
+app.use(function(err, req, res, next) {  // 配置一个全局错误处理的中间件
+    res.stutus(500).json({
+        err_code: 500,
+        message: err.message
+    })
+})
+
 app.listen(5000, function() {
     console.log('app is running..')
 })

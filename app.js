@@ -18,17 +18,20 @@ app.use(bodyParser.json())
 app.use(session({
     secret: 'my blog',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
 }))
 
-app.use(router)  // 把路由挂载到 app 服务中
+// 把路由挂载到 app 服务中
+app.use(router)
 
-app.use(function(req, res) {  // 配置一个处理 404 的中间件
+// 配置一个处理 404 的中间件
+app.use(function(req, res) {
     res.render('404.html')
 })
 
-app.use(function(err, req, res, next) {  // 配置一个全局错误处理的中间件
-    res.stutus(500).json({
+// 配置一个全局错误处理的中间件
+app.use(function(err, req, res, next) {
+    res.status(500).json({
         err_code: 500,
         message: err.message
     })

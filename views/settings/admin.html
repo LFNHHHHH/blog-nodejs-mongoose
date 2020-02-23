@@ -4,24 +4,28 @@
 
 {{block 'body'}}
 <section class="container">
-  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-3 list-group">
+    <a href="#" class="list-group-item disabled">用户设置</a>
+    <a href="/settings/profile" class="list-group-item">基本信息</a>
+    <a href="/settings/admin" class="list-group-item active">账户设置</a>
+  </div>
   <div class="col-md-5">
     <div class="subhead">
       <h2>修改密码</h2>
     </div>
     <hr>
-    <form>
+    <form id="admin_form">
       <div class="form-group">
-        <label for="exampleInputPassword1">当前密码</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+        <label for="">当前密码</label>
+        <input type="password" class="form-control" id="password" placeholder="" name="password">
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">新的密码</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+        <label for="">新的密码</label>
+        <input type="password" class="form-control" id="newpassword" placeholder="" name="newpassword">
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">确认密码</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+        <label for="">确认密码</label>
+        <input type="password" class="form-control" id="newpassword2" placeholder="" name="newpassword2">
       </div>
       <button type="submit" class="btn btn-success">保存</button>
     </form>
@@ -36,4 +40,31 @@
     <hr>
   </div>
 </section>
+{{/block}}
+{{block 'script'}}
+<script>
+  $('#admin_form').on('submit', function (e) {
+    e.preventDefault()
+    var formData = $(this).serialize()
+    console.log(formData)
+    $.ajax({
+      url: '/settings/admin',
+      type: 'post',
+      data: formData,
+      dataType: 'json',
+      success: function (data) {
+        if (data.err_code === 0) {
+          window.alert('密码错误')
+        } else if (data.err_code === 1) {
+          window.alert('两次密码不一致')
+        } else if (data.err_code === 3) {
+          window.alert('密码修改成功')
+          window.location.href = '/login'
+        } else if (data.err_code === 500) {
+          window.alert('数据库操作失败')
+        }
+      }
+    })
+  })
+</script>
 {{/block}}

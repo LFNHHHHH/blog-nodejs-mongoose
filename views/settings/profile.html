@@ -4,38 +4,42 @@
 
 {{block 'body'}}
 <section class="container">
-  {{include '../_partials/settings-nav.html'}}
+  <div class="col-md-3 list-group">
+    <a href="#" class="list-group-item disabled">用户设置</a>
+    <a href="/settings/profile" class="list-group-item active">基本信息</a>
+    <a href="/settings/admin" class="list-group-item">账户设置</a>
+  </div>
   <div class="col-md-5">
-    <form>
+    <form id="profile_form">
       <div class="form-group">
         <label for="exampleInputEmail1">账号</label>
-        <p class="form-control-static">email@example.com</p>
+        <p class="form-control-static">{{ user.email }}</p>
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">昵称</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+        <label for="">昵称</label>
+        <input type="text" class="form-control" id="nickname" placeholder="" name="nickname" value="{{ user.nickname }}">
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">介绍</label>
-        <textarea class="form-control" rows="3"></textarea>
+        <label for="">介绍</label>
+        <textarea class="form-control" rows="3" name="bio">{{ user.bio }}</textarea>
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">性别</label>
+        <label for="">性别</label>
         <div>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 男
+            <input type="radio" value="-1" name="gender" {{ if user.gender = -1 }} checked {{ /if }}> 男
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 女
+            <input type="radio" value="0" name="gender" {{ if user.gender = 0 }} checked {{ /if }}> 女
           </label>
           <label class="radio-inline">
-            <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 保密
+            <input type="radio" value="1" name="gender" {{ if user.gender = 1 }} checked {{ /if }}> 保密
           </label>
         </div>
       </div>
       <div class="form-group">
         <label for="exampleInputPassword1">生日</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+        <input type="text" class="form-control" id="birthday" placeholder="" name="birthday" value="{{ user.birthday }}">
       </div>
       <button type="submit" class="btn btn-success">保存</button>
     </form>
@@ -52,4 +56,27 @@
     </dl>
   </div>
 </section>
+{{/block}}
+{{block 'script'}}
+<script>
+  $('#profile_form').on('submit', function (e) {
+    e.preventDefault()
+    var formData = $(this).serialize()
+    console.log(formData)
+    $.ajax({
+      url: '/settings/profile',
+      type: 'post',
+      data: formData,
+      dataType: 'json',
+      success: function (data) {
+        if (data.err_code === 0) {
+          window.alert('信息修改成功')
+          window.location.href = '/settings/profile'  // 修改成功刷新页面
+        } else if (data.err_code === 500) {
+          window.alert('服务器忙，请稍后再试')
+        }
+      }
+    })
+  })
+</script>
 {{/block}}

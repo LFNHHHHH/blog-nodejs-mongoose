@@ -177,4 +177,10 @@ router.post('/settings/profile', function(req, res, next) {  // 用户信息设�
     
 })
 
+router.get('/topics/new', function(req, res, next) {   // 发表文章页面渲染
+    res.render('./topic/new.html', {
+        user: req.session.user
+    })
+})
+
 module.exports = router
